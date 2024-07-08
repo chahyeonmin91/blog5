@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">Post Title</title>
+</head>
+<body>
+<h1 th:text="${post.title}">Post Title</h1>
+<p th:text="${post.content}">Post Content</p>
+<div>
+    <p>작성일: <span th:text="${post.createdAt}">CreatedAt</span></p>
+    <p th:if="${!isOwner && !post.isPublic}">비공개</p>
+</div>
+<div th:if="${isOwner}">
+    <h2>통계정보</h2>
+    <p>조회수: <span th:text="${statistics.views}">0</span></p>
+    <p>좋아요: <span th:text="${statistics.likes}">0</span></p>
+    <a th:href="@{/posts/edit/{postId}(postId=${post.id})}">수정</a>
+    <form action="#" th:action="@{/posts/delete/{postId}(postId=${post.id})}" method="post">
+        <button type="submit">삭제</button>
+    </form>
+</div>
+<div th:if="${!isOwner}">
+    <form action="#" th:action="@{/posts/like/{postId}(postId=${post.id})}" method="post">
+        <button type="submit">좋아요</button>
+    </form>
+    <form action="#" th:action="@{/posts/follow/{userId}(userId=${post.blog.user.id})}" method="post">
+        <button type="submit" th:if="${canFollow}">팔로우</button>
+    </form>
+</div>
+<div>
+    <img th:src="${post.blog.user.profileImage}" alt="Profile Image">
+    <p th:text="${post.blog.user.username}">User Name</p>
+</div>
+<div>
+    <a th:if="${previousPost != null}" th:href="@{/posts/{postId}(postId=${previousPost.id})}" th:text="${previousPost.title}">Previous Post</a>
+    <a th:if="${nextPost != null}" th:href="@{/posts/{postId}(postId=${nextPost.id})}" th:text="${nextPost.title}">Next Post</a>
+</div>
+
+<div>
+    <h2>댓글 (<span th:text="${post.comments.size()}">0</span>)</h2>
+    <div th:each="comment : ${post.comments}">
+        <p th:text="${comment.user.username} + ': ' + ${comment.content}">Username: Comment Content</p>
+        <form action="#" th:action="@{/comments/delete/{commentId}(commentId=${comment.id})}" method="post">
+            <input type="hidden" name="postId" th:value="${post.id}">
+            <button type="submit">삭제</button>
+        </form>
+        <form action="#" th:action="@{/comments/add}" method="post">
+            <input type="hidden" name="postId" th:value="${post.id}">
+            <input type="hidden" name="parentId" th:value="${comment.id}">
+            <textarea name="content"></textarea>
+            <button type="submit">답글 달기</button>
+        </form>
+        <div th:each="reply : ${comment.replies}">
+            <p th:text="${reply.user.username} + ': ' + ${reply.content}">Username: Reply Content</p>
+            <form action="#" th:action="@{/comments/delete/{commentId}(commentId=${reply.id})}" method="post">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <button type="submit">삭제</button>
+            </form>
+        </div>
+    </div>
+    <form action="#" th:action="@{/comments/add}" method="post">
+        <input type="hidden" name="postId" th:value="${post.id}">
+        <textarea name="content"></textarea>
+        <button type="submit">댓글 달기</button>
+    </form>
+</div>
+</body>
+</html>

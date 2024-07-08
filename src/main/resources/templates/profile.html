@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>프로필</title>
+</head>
+<body>
+<h1>프로필</h1>
+<form action="#" th:action="@{/profile/image}" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="image">프로필 이미지:</label>
+        <input type="file" id="image" name="image">
+        <button type="submit">업로드</button>
+    </div>
+</form>
+<form action="#" th:action="@{/profile/image}" method="post">
+    <input type="hidden" name="_method" value="delete">
+    <button type="submit">프로필 이미지 삭제</button>
+</form>
+<form action="#" th:action="@{/profile/email}" method="post">
+    <div>
+        <label for="email">이메일:</label>
+        <input type="email" id="email" name="email" th:value="${user.email}" required>
+        <button type="submit">이메일 변경</button>
+    </div>
+</form>
+<form action="#" th:action="@{/profile/notifications}" method="post">
+    <div>
+        <label>
+            댓글 알림:
+            <input type="checkbox" name="comment" th:checked="${user.emailNotifications['comment']}">
+        </label>
+    </div>
+    <div>
+        <label>
+            업데이트 소식 알림:
+            <input type="checkbox" name="update" th:checked="${user.emailNotifications['update']}">
+        </label>
+    </div>
+    <button type="submit">알림 설정 변경</button>
+</form>
+<form action="#" th:action="@{/profile/delete}" method="post">
+    <button type="submit">회원 탈퇴</button>
+</form>
+</body>
+</html>

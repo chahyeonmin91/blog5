@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${user.username} + '의 블로그'">User Blog</title>
+</head>
+<body>
+<h1 th:text="${user.username} + '의 블로그'">User Blog</h1>
+<div>
+    <h2>태그</h2>
+    <ul>
+        <li th:each="tag : ${tags}" th:text="${tag.name} + ' (' + ${tag.count} + ')'">Tag</li>
+    </ul>
+</div>
+<div>
+    <h2>글 목록</h2>
+    <ul>
+        <li th:each="post : ${posts}">
+            <a th:href="@{/posts/{postId}(postId=${post.id})}" th:text="${post.title}">Post Title</a>
+        </li>
+    </ul>
+</div>
+<div>
+    <h2>시리즈</h2>
+    <ul>
+        <li th:each="series : ${series}">
+            <a th:href="@{/series/{seriesId}(seriesId=${series.id})}" th:text="${series.title}">Series Title</a>
+        </li>
+    </ul>
+</div>
+<div>
+    <h2>소개</h2>
+    <p th:text="${user.introduction}">Introduction</p>
+</div>
+</body>
+</html>

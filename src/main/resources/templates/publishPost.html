@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>글 출간</title>
+</head>
+<body>
+<h1>글 출간</h1>
+<form action="#" th:action="@{/posts/publish/{postId}(postId=${post.id})}" th:object="${post}" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="title">제목:</label>
+        <input type="text" id="title" th:field="*{title}" required>
+    </div>
+    <div>
+        <label for="content">내용:</label>
+        <textarea id="content" th:field="*{content}" required></textarea>
+    </div>
+    <div>
+        <label for="previewImage">미리보기 이미지:</label>
+        <input type="file" id="previewImage" name="previewImage">
+    </div>
+    <div>
+        <label for="seriesId">시리즈 추가:</label>
+        <select id="seriesId" name="seriesId">
+            <option th:each="series : ${seriesList}" th:value="${series.id}" th:text="${series.title}">시리즈</option>
+        </select>
+    </div>
+    <div>
+        <input type="checkbox" id="isPublic" name="isPublic">
+        <label for="isPublic">전체공개</label>
+    </div>
+    <div>
+        <button type="submit">출간</button>
+    </div>
+</form>
+</body>
+</html>
