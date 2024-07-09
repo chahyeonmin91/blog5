@@ -1,11 +1,11 @@
 package com.example.blog5.controller;
 
-
 import com.example.blog5.model.Blog;
 import com.example.blog5.model.Post;
 import com.example.blog5.model.Series;
 import com.example.blog5.model.User;
 import com.example.blog5.service.*;
+import com.example.blog5.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,12 +33,15 @@ public class PostController {
 
     @Autowired
     private BlogService blogService;
-    @Autowired
-    private FollowService followService;
+
     @Autowired
     private LikeService likeService;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FollowService followService;
 
     @GetMapping("/create")
     public String showCreatePostForm(Model model) {
@@ -198,8 +199,7 @@ public class PostController {
     }
 
     private User getCurrentUser() {
-        // 현재 로그인한 사용자 정보를 반환
-        return new User(); // 예시로 빈 사용자 반환
+        return UserContext.getUser();
     }
 
     private Map<String, Object> getStatistics(Post post) {

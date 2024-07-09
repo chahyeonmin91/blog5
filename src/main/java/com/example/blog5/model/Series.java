@@ -25,5 +25,4 @@ public class Series {
     @ManyToOne
     @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
-
 }

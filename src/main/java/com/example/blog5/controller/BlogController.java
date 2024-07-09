@@ -24,7 +24,7 @@ public class BlogController {
     private UserService userService;
 
     @Autowired
-    private TagService tagService; // 추가된 부분
+    private TagService tagService;
 
     @GetMapping
     public String showUserBlog(@PathVariable String username, Model model) {

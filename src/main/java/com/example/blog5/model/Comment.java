@@ -37,5 +37,4 @@ public class Comment {
     private List<Comment> replies;
 
     private LocalDateTime createdAt;
-
 }

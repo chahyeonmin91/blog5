@@ -48,5 +48,4 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "series_id")
     private Series series;
-
 }

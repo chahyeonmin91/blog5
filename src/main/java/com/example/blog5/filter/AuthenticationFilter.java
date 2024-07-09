@@ -1,6 +1,5 @@
 package com.example.blog5.filter;
 
-
 import com.example.blog5.model.User;
 import com.example.blog5.service.UserService;
 import com.example.blog5.util.UserContext;
@@ -8,7 +7,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 public class AuthenticationFilter implements Filter {

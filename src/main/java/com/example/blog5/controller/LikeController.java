@@ -1,6 +1,5 @@
 package com.example.blog5.controller;
 
-
 import com.example.blog5.model.Post;
 import com.example.blog5.model.User;
 import com.example.blog5.service.LikeService;

@@ -1,9 +1,7 @@
 package com.example.blog5.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Map;
 
 @Entity
@@ -12,7 +10,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

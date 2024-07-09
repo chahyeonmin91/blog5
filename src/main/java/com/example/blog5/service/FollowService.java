@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FollowService {
@@ -32,7 +33,7 @@ public class FollowService {
     }
 
     public List<User> getFollowedUsers(User follower) {
-        return followRepository.findByFollower(follower).stream().map(Follow::getFollowed).collect(java.util.stream.Collectors.toList()); // Collectors import 추가
+        return followRepository.findByFollower(follower).stream().map(Follow::getFollowed).collect(Collectors.toList());
     }
 
     public boolean isFollowing(User follower, User followed) {

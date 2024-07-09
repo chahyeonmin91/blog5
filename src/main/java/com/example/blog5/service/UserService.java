@@ -1,6 +1,5 @@
 package com.example.blog5.service;
 
-
 import com.example.blog5.model.User;
 import com.example.blog5.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
