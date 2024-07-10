@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Cookie</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>Create Cookie</h1>
+<button id="sendCookieButton">Send Cookie to API</button>
+<p id="responseText"></p>
+
+<script>
+    $(document).ready(function () {
+        $("#sendCookieButton").click(function () {
+            $.ajax({
+                url: "/api/sendCookie",
+                type: "GET",
+                success: function (response) {
+                    $("#responseText").text("Response from API: " + response);
+                },
+                error: function () {
+                    $("#responseText").text("Failed to send cookie to API.");
+                },
+            });
+        });
+    });
+</script>
+</body>
+</html>

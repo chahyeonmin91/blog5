@@ -15,17 +15,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/login", "/error").permitAll()  // 로그인 페이지와 에러 페이지는 누구나 접근 가능
-                        .anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
+                .authorizeRequests(auth -> auth
+                        .requestMatchers("/","/main", "/login", "/register", "/css/**", "/js/**").permitAll() // 정적 자원도 permitAll
+                        .anyRequest().authenticated()
                 )
-                .formLogin((form) -> form
-                        .loginPage("/login")  // 사용자 정의 로그인 페이지
-                        .defaultSuccessUrl("/home", true)  // 로그인 성공 후 리디렉션할 페이지
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/main")
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll());  // 로그아웃 허용
-
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/main")
+                        .permitAll()
+                )
+                .csrf(csrf -> csrf.disable()); // CSRF 비활성화 (테스트용)
 
         return http.build();
     }

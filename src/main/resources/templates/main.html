@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>블로그 메인</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -13,7 +13,10 @@
             loadPosts();
 
             $(window).scroll(function () {
-                if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
+                if (
+                    $(window).scrollTop() + $(window).height() >=
+                    $(document).height()
+                ) {
                     loadPosts();
                 }
             });
@@ -28,16 +31,16 @@
                     page++;
                     posts.forEach((post) => {
                         $("#posts").append(`
-                <div class="post">
-                  <h2>${post.title}</h2>
-                  <p>${post.excerpt}</p>
-                  <div class="author">
-                    <img src="${post.author.profileImage}" alt="profile" />
-                    <span>${post.author.username}</span>
-                  </div>
-                  <span>좋아요: ${post.likes}</span>
-                </div>
-              `);
+                            <div class="post">
+                                <h2>${post.title}</h2>
+                                <p>${post.excerpt}</p>
+                                <div class="author">
+                                    <img src="${post.author.profileImage}" alt="profile" />
+                                    <span>${post.author.username}</span>
+                                </div>
+                                <span>좋아요: ${post.likes}</span>
+                            </div>
+                        `);
                     });
                 },
                 error: function (error) {
@@ -60,7 +63,18 @@
     </style>
 </head>
 <body>
-<h1>블로그 메인</h1>
-<div id="posts"></div>
+<div class="header">
+    <h1>블로그 플랫폼</h1>
+</div>
+<div class="nav">
+    <a href="/login">로그인</a>
+    <a href="/register">회원가입</a>
+</div>
+<div class="container">
+    <div class="main-content">
+        <h2>메인 페이지</h2>
+        <p>환영합니다! 이곳에서 다양한 블로그 글을 탐색해보세요.</p>
+    </div>
+</div>
 </body>
 </html>

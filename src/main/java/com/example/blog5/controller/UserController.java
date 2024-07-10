@@ -2,10 +2,10 @@ package com.example.blog5.controller;
 
 import com.example.blog5.model.User;
 import com.example.blog5.service.UserService;
+import com.example.blog5.util.UserContext;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.util.Map;
 
 @Controller
+@Slf4j
 @RequestMapping("/profile")
+@RestController
 public class UserController {
 
     @Autowired
@@ -67,15 +69,27 @@ public class UserController {
         // 현재 로그인한 사용자 정보를 반환
         return new User(); // 예시로 빈 사용자 반환
     }
-    @GetMapping("/loginform")
+    @GetMapping("/login")
     public String showLoginForm() {
-        return "loginform"; // 로그인 폼 HTML 페이지 반환
+        log.info("s안아");
+        return "login"; // 로그인 폼 HTML 페이지 반환
     }
 
     @PostMapping("/login")
     public String processLogin(@RequestParam String username, @RequestParam String password, HttpSession session) {
         // 로그인 검증 로직
         // 성공 시 세션에 사용자 정보 저장 등
-        return "redirect:/userHomePage"; // 로그인 성공 후 리다이렉트 할 페이지
+        return "redirect:/main"; // 로그인 성공 후 리다이렉트 할 페이지
     }
-}
+
+//    @GetMapping("/user-info")
+//        public String getUserInfo() {
+//            String userId = UserContext.getUser();
+//            if (userId != null) {
+//                return "User ID: " + userId;
+//            } else {
+//                return "No user authenticated";
+//            }
+//        }
+
+    }

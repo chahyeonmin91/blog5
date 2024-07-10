@@ -7,6 +7,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 public class AuthenticationFilter implements Filter {
@@ -27,6 +28,13 @@ public class AuthenticationFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        // 로그인 페이지와 등록 페이지에 대해서는 필터 적용 안 함
+        String uri = httpRequest.getRequestURI();
+        if (uri.startsWith("/login") || uri.startsWith("/register")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         Cookie[] cookies = httpRequest.getCookies();
         if (cookies != null) {
@@ -52,4 +60,10 @@ public class AuthenticationFilter implements Filter {
     public void destroy() {
         // 정리 코드 (필요한 경우)
     }
+    private String validateTokenAndGetUserId(String token) {
+        // 토큰 검증 및 사용자 ID 추출 로직 (예: JWT 검증)
+        // 유효한 경우 사용자 ID를 반환, 그렇지 않으면 null 반환
+        return null;
+    }
+
 }
