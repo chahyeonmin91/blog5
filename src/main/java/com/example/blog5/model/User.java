@@ -2,6 +2,7 @@ package com.example.blog5.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.Map;
 
 @Entity
@@ -13,7 +14,7 @@ import java.util.Map;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userid;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -36,4 +37,12 @@ public class User {
     @MapKeyColumn(name = "type")
     private Map<String, Boolean> emailNotifications;
 
+    // 새로운 필드 추가
+    @Column
+    private String introduction;
+
+    // 새로운 메서드 추가
+    public String getIntroduction() {
+        return introduction;
+    }
 }

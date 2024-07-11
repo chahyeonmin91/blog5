@@ -48,4 +48,13 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "series_id")
     private Series series;
+
+    // 좋아요 수를 추적하는 필드 추가
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Like> likes;
+
+    // 좋아요 수를 반환하는 메서드
+    public int getLikesCount() {
+        return likes != null ? likes.size() : 0;
+    }
 }

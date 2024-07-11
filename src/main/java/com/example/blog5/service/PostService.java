@@ -1,20 +1,25 @@
 package com.example.blog5.service;
 
-
 import com.example.blog5.model.Blog;
 import com.example.blog5.model.Post;
 import com.example.blog5.model.User;
 import com.example.blog5.repository.PostRepository;
+import com.example.blog5.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Post savePost(Post post) {
         return postRepository.save(post);
@@ -28,8 +33,12 @@ public class PostService {
         return postRepository.findByBlogAndPublishedOrderByCreatedAtDesc(blog, true);
     }
 
-    public void deletePost(Long postId) {
-        postRepository.deleteById(postId);
+    public boolean deletePost(Long postId) {
+        if (postRepository.existsById(postId)) {
+            postRepository.deleteById(postId);
+            return true;
+        }
+        return false;
     }
 
     public Post getPostById(Long postId) {
@@ -51,6 +60,25 @@ public class PostService {
     }
 
     public List<Post> getAllPosts() {
-        return postRepository.findAll();  // 추가된 메서드
+        return postRepository.findAll();
+    }
+
+    public List<Post> getPosts(String sort) {
+        List<Post> posts = postRepository.findAll();
+        if ("popular".equalsIgnoreCase(sort)) {
+            posts = posts.stream()
+                    .sorted(Comparator.comparingInt(Post::getLikesCount).reversed())
+                    .collect(Collectors.toList());
+        } else {
+            posts = posts.stream()
+                    .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                    .collect(Collectors.toList());
+        }
+        return posts;
+    }
+
+    public Blog getBlogByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        return user != null ? user.getBlog() : null;
     }
 }

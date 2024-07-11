@@ -29,6 +29,15 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        System.out.println("AuthenticationFilter: " + httpRequest.getRequestURI());
+        System.out.println("AuthenticationFilter: " + httpRequest.getMethod());
+
+        // URI, Method를 쿠키의 사용자가 이용할 수 있는지 확인한 후 문제가 없다면 chain.doFilter(request, response); 를 실행하고 권한이 없을 경우엔 특정 경로로 redirect한다.
+
+
+
+
+
         // 로그인 페이지와 등록 페이지에 대해서는 필터 적용 안 함
         String uri = httpRequest.getRequestURI();
         if (uri.startsWith("/login") || uri.startsWith("/register")) {

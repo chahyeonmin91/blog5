@@ -1,7 +1,5 @@
 package com.example.blog5.model;
 
-
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +25,12 @@ public class Blog {
 
     @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
     private List<Post> posts;
+
+    // 시리즈 목록을 반환하는 메서드 추가
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+    private List<Series> series;
+
+    public List<Series> getSeries() {
+        return series;
+    }
 }

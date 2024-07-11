@@ -7,6 +7,7 @@ import com.example.blog5.model.User;
 import com.example.blog5.service.*;
 import com.example.blog5.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
 
     @Autowired
@@ -49,7 +50,7 @@ public class PostController {
         Blog blog = blogService.getBlogByUser(getCurrentUser());
         List<Series> seriesList = seriesService.getSeriesByBlog(blog);
         model.addAttribute("seriesList", seriesList);
-        return "createPost";
+        return "postForm";
     }
 
     @PostMapping("/create")
@@ -147,13 +148,20 @@ public class PostController {
         return "viewPost";
     }
 
-    @PostMapping("/like/{postId}")
-    public String likePost(@PathVariable Long postId) {
+    // 좋아요 기능 추가
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<?> likePost(@PathVariable Long postId) {
         User currentUser = getCurrentUser();
         Post post = postService.getPostById(postId);
+
+        if (post == null) {
+            return ResponseEntity.status(400).body(Map.of("error", "잘못된 요청입니다."));
+        }
+
         likeService.likePost(currentUser, post);
-        return "redirect:/posts/" + postId;
+        return ResponseEntity.ok(Map.of("message", "좋아요가 추가되었습니다."));
     }
+
 
     @PostMapping("/follow/{userId}")
     public String followUser(@PathVariable Long userId) {
