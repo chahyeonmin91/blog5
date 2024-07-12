@@ -28,20 +28,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserController {
 
-
     private final UserService userService;
-
     private final FollowService followService;
-
-
     private final UserRepository userRepository;
-
-
     private final PostService postService;
-
-
     private final SeriesService seriesService;
-
     private final TagService tagService;
 
     @GetMapping
@@ -156,23 +147,37 @@ public class UserController {
         List<Series> series = seriesService.getSeriesByUser(user);
 
         Map<String, Object> response = Map.of(
-                "tags", tags.stream().map(tag -> Map.of("tag", tag.getName(), "count", tag.getCount())).collect(Collectors.toList()),
+                "tags", tags.stream().map(tag -> Map.of("tag", (Object) tag.getName(), "count", (Object) tag.getCount())).collect(Collectors.toList()),
                 "posts", posts.stream().map(post -> Map.of(
-                        "postId", post.getId(),
-                        "title", post.getTitle(),
-                        "excerpt", post.getContent().substring(0, Math.min(post.getContent().length(), 100)), // Excerpt는 콘텐츠의 앞부분 100자
-                        "createdAt", post.getCreatedAt(),
-                        "series", post.getSeries() != null ? post.getSeries().getTitle() : null
+                        "postId", (Object) post.getId(),
+                        "title", (Object) post.getTitle(),
+                        "excerpt", (Object) post.getContent().substring(0, Math.min(post.getContent().length(), 100)), // Excerpt는 콘텐츠의 앞부분 100자
+                        "createdAt", (Object) post.getCreatedAt(),
+                        "series", (Object) (post.getSeries() != null ? post.getSeries().getTitle() : null)
                 )).collect(Collectors.toList()),
                 "series", series.stream().map(s -> Map.of(
-                        "seriesId", s.getId(),
-                        "title", s.getTitle(),
-                        "posts", s.getPosts().stream().map(p -> Map.of("postId", p.getId(), "title", p.getTitle())).collect(Collectors.toList())
+                        "seriesId", (Object) s.getId(),
+                        "title", (Object) s.getTitle(),
+                        "posts", (Object) s.getPosts().stream().map(p -> Map.of("postId", (Object) p.getId(), "title", (Object) p.getTitle())).collect(Collectors.toList())
                 )).collect(Collectors.toList()),
-                "introduction", user.getBlog().getIntroduction()
+                "introduction", (Object) user.getBlog().getIntroduction()
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    // 사용자 아이디 중복 확인 API 추가
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
+        boolean exists = userService.usernameExists(username);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    // 이메일 중복 확인 API 추가
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam("email") String email) {
+        boolean exists = userService.emailExists(email);
+        return ResponseEntity.ok(Map.of("exists", exists));
     }
 
     private User getCurrentUser() {

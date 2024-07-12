@@ -23,6 +23,16 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // 사용자 아이디 중복 확인 메서드 추가
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    // 이메일 중복 확인 메서드 추가
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

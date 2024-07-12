@@ -20,4 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 인기 글 가져오기
     List<Post> findAllByPublishedTrueOrderByLikesCountDesc();
+
+    // 임시 글 가져오기
+    List<Post> findByBlogUserAndPublishedFalse(User user);
 }

@@ -62,4 +62,8 @@ public class PostService {
     public List<Post> getPopularPosts() {
         return postRepository.findAllByPublishedTrueOrderByLikesCountDesc();
     }
+    // 임시 글 목록 조회 기능 추가
+    public List<Post> getDraftsByUser(User user) {
+        return postRepository.findByBlogUserAndPublishedFalse(user);
+    }
 }

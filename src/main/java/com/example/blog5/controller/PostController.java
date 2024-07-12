@@ -176,6 +176,21 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    // 임시 글 목록 조회 기능 추가
+    @GetMapping("/drafts")
+    public ResponseEntity<List<Map<String, Object>>> getDraftPosts() {
+        User currentUser = getCurrentUser();
+        List<Post> drafts = postService.getDraftsByUser(currentUser);
+
+        List<Map<String, Object>> response = drafts.stream().map(draft -> Map.of(
+                "postId", (Object) draft.getId(),
+                "title", (Object) draft.getTitle(),
+                "createdAt", (Object) draft.getCreatedAt()
+        )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
     // 좋아요 기능 추가
     @PostMapping("/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Long postId) {
@@ -250,10 +265,16 @@ public class PostController {
         return "redirect:/posts/" + postId;
     }
 
-    @PostMapping("/delete/{postId}")
-    public String deletePost(@PathVariable Long postId) {
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId) {
+        Post post = postService.getPostById(postId);
+
+        if (post == null) {
+            return ResponseEntity.status(400).body(Map.of("error", "잘못된 요청입니다."));
+        }
+
         postService.deletePost(postId);
-        return "redirect:/";
+        return ResponseEntity.ok(Map.of("message", "글 삭제가 완료되었습니다."));
     }
 
     private List<String> saveImages(List<MultipartFile> imageFiles) throws IOException {
