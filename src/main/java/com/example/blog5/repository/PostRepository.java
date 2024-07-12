@@ -14,4 +14,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBlogAndPublishedOrderByCreatedAtDesc(Blog blog, boolean published);
     List<Post> findByBlogAndPublished(Blog blog, boolean published);
     List<Post> findAll();
+
+    // 최신 글 가져오기
+    List<Post> findAllByPublishedTrueOrderByCreatedAtDesc();
+
+    // 인기 글 가져오기
+    List<Post> findAllByPublishedTrueOrderByLikesCountDesc();
 }

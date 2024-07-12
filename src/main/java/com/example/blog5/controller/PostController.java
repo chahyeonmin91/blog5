@@ -1,6 +1,7 @@
 package com.example.blog5.controller;
 
 import com.example.blog5.model.Blog;
+import com.example.blog5.model.Comment;
 import com.example.blog5.model.Post;
 import com.example.blog5.model.Series;
 import com.example.blog5.model.User;
@@ -43,6 +44,9 @@ public class PostController {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/create")
     public String showCreatePostForm(Model model) {
@@ -148,6 +152,30 @@ public class PostController {
         return "viewPost";
     }
 
+    // 최신 글/인기 글 목록 조회 기능 추가
+    @GetMapping
+    public ResponseEntity<?> getPosts(@RequestParam(defaultValue = "latest") String sort) {
+        List<Post> posts;
+        if ("popular".equals(sort)) {
+            posts = postService.getPopularPosts();
+        } else {
+            posts = postService.getLatestPosts();
+        }
+
+        List<Map<String, Object>> response = posts.stream().map(post -> Map.of(
+                "postId", post.getId(),
+                "title", post.getTitle(),
+                "excerpt", post.getContent().substring(0, Math.min(post.getContent().length(), 100)),
+                "author", Map.of(
+                        "username", post.getBlog().getUser().getUsername(),
+                        "profileImage", post.getBlog().getUser().getProfileImage()
+                ),
+                "likes", post.getLikesCount()
+        )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
     // 좋아요 기능 추가
     @PostMapping("/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Long postId) {
@@ -162,6 +190,41 @@ public class PostController {
         return ResponseEntity.ok(Map.of("message", "좋아요가 추가되었습니다."));
     }
 
+    // 댓글 작성 기능 추가
+    @PostMapping("/{postId}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long postId, @RequestBody Map<String, String> request) {
+        String content = request.get("content");
+        Post post = postService.getPostById(postId);
+        User user = getCurrentUser();
+
+        if (post == null || content == null || content.isEmpty()) {
+            return ResponseEntity.status(400).body(Map.of("error", "잘못된 요청입니다."));
+        }
+
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setPost(post);
+        comment.setUser(user);
+        comment.setCreatedAt(LocalDateTime.now());
+
+        Comment savedComment = commentService.saveComment(comment);
+        return ResponseEntity.ok(Map.of(
+                "message", "댓글 작성이 완료되었습니다.",
+                "commentId", savedComment.getId()
+        ));
+    }
+
+    // 댓글 삭제 기능 추가
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        Post post = postService.getPostById(postId);
+        if (post == null || commentService.getCommentById(commentId) == null) {
+            return ResponseEntity.status(400).body(Map.of("error", "잘못된 요청입니다."));
+        }
+
+        commentService.deleteComment(commentId);
+        return ResponseEntity.ok(Map.of("message", "댓글 삭제가 완료되었습니다."));
+    }
 
     @PostMapping("/follow/{userId}")
     public String followUser(@PathVariable Long userId) {
@@ -212,6 +275,6 @@ public class PostController {
 
     private Map<String, Object> getStatistics(Post post) {
         // 통계 정보를 반환하는 로직
-        return Map.of("views", 100, "likes", likeService.getLikesCount(post));
+        return Map.of("views", 100, "likes", post.getLikesCount());
     }
 }

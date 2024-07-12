@@ -17,8 +17,16 @@ public class Tag {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private int count;
+
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Getter for count
+    public int getCount() {
+        return count;
+    }
 }

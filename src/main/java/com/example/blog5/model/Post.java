@@ -1,6 +1,5 @@
 package com.example.blog5.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 

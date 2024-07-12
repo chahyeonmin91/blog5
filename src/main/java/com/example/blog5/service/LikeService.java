@@ -1,6 +1,5 @@
 package com.example.blog5.service;
 
-
 import com.example.blog5.model.Like;
 import com.example.blog5.model.Post;
 import com.example.blog5.model.User;
@@ -37,7 +36,12 @@ public class LikeService {
         return likeRepository.findByUser(user).stream().map(Like::getPost).collect(Collectors.toList());
     }
 
+
     public long getLikesCount(Post post) {
-        return likeRepository.findByPost(post).size();
+        return likeRepository.countByPost(post);
+    }
+
+    public List<Post> getPopularPosts() {
+        return likeRepository.findPopularPosts();
     }
 }

@@ -3,15 +3,17 @@ package com.example.blog5.controller;
 import com.example.blog5.dto.UserUpdateRequest;
 import com.example.blog5.dto.PasswordRequest;
 import com.example.blog5.model.User;
+import com.example.blog5.model.Post;
+import com.example.blog5.model.Series;
+import com.example.blog5.model.Tag;
 import com.example.blog5.repository.UserRepository;
-import com.example.blog5.service.UserService;
-import com.example.blog5.service.FollowService;
+import com.example.blog5.service.*;
 import com.example.blog5.util.UserContext;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,16 +25,24 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private FollowService followService;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final FollowService followService;
+
+
+    private final UserRepository userRepository;
+
+
+    private final PostService postService;
+
+
+    private final SeriesService seriesService;
+
+    private final TagService tagService;
 
     @GetMapping
     public ResponseEntity<User> showProfile() {
@@ -124,10 +134,43 @@ public class UserController {
         List<User> followers = followService.getFollowedUsers(currentUser);
 
         List<Map<String, Object>> response = followers.stream().map(follower -> Map.of(
-                "userId", (Object) follower.getUserid(),
+                "userId", (Object) follower.getId(),
                 "username", (Object) follower.getUsername(),
                 "profileImage", (Object) follower.getProfileImage()
         )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 특정 사용자 블로그 페이지 조회
+    @GetMapping("/{username}/posts")
+    public ResponseEntity<?> getUserBlog(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+
+        List<Tag> tags = tagService.getTagsByUser(user);
+        List<Post> posts = postService.getPostsByUser(user);
+        List<Series> series = seriesService.getSeriesByUser(user);
+
+        Map<String, Object> response = Map.of(
+                "tags", tags.stream().map(tag -> Map.of("tag", tag.getName(), "count", tag.getCount())).collect(Collectors.toList()),
+                "posts", posts.stream().map(post -> Map.of(
+                        "postId", post.getId(),
+                        "title", post.getTitle(),
+                        "excerpt", post.getContent().substring(0, Math.min(post.getContent().length(), 100)), // Excerpt는 콘텐츠의 앞부분 100자
+                        "createdAt", post.getCreatedAt(),
+                        "series", post.getSeries() != null ? post.getSeries().getTitle() : null
+                )).collect(Collectors.toList()),
+                "series", series.stream().map(s -> Map.of(
+                        "seriesId", s.getId(),
+                        "title", s.getTitle(),
+                        "posts", s.getPosts().stream().map(p -> Map.of("postId", p.getId(), "title", p.getTitle())).collect(Collectors.toList())
+                )).collect(Collectors.toList()),
+                "introduction", user.getBlog().getIntroduction()
+        );
 
         return ResponseEntity.ok(response);
     }
